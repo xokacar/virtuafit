@@ -49,3 +49,4 @@ jobs:
           docker build -t ${{ env.ECR_REPOSITORY }}:workout_service .
           docker tag ${{ env.ECR_REPOSITORY }}:workout_service ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service:latest
+
