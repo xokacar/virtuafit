@@ -32,21 +32,20 @@ jobs:
       - name: Build and push auth_service image
         run: |
           cd auth_service
-          docker build -t ${{ env.ECR_REPOSITORY }}:auth_service .
-          docker tag ${{ env.ECR_REPOSITORY }}:auth_service ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service:latest
+          docker build -t auth_service:latest .
+          docker tag auth_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service
 
       - name: Build and push analytics_service image
         run: |
           cd analytics_service
-          docker build -t ${{ env.ECR_REPOSITORY }}:analytics_service .
-          docker tag ${{ env.ECR_REPOSITORY }}:analytics_service ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service:latest
+          docker build -t analytics_service:latest .
+          docker tag analytics_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service
 
       - name: Build and push workout_service image
         run: |
           cd workout_service
-          docker build -t ${{ env.ECR_REPOSITORY }}:workout_service .
-          docker tag ${{ env.ECR_REPOSITORY }}:workout_service ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service:latest
-
+          docker build -t workout_service:latest .
+          docker tag workout_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service
