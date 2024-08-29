@@ -1,0 +1,60 @@
+replicaCount: 1
+
+app:
+  name: virtuafit
+  namespace: vf-dev
+  environment: dev
+
+
+services:
+  auth:
+    name: auth-service 
+    image:
+      repository: repository/image-name
+      pullPolicy: Always
+      tag: "latest"
+    ports:
+      http: 5000
+    probes: 
+      initalDelaySeconds: 10
+      path: "/alive"
+  analytics:
+    name: analytics-service 
+    image:
+      repository: repository/image-name
+      pullPolicy: Always
+      tag: "latest"
+    ports:
+      http: 5000
+    probes: 
+      initalDelaySeconds: 10
+      path: "/alive"
+  workout:
+    name: workout-service 
+    image:
+      repository: repository/image-name
+      pullPolicy: Always
+      tag: "latest"
+    ports:
+      http: 5000
+    probes: 
+      initalDelaySeconds: 10
+      path: "/alive"
+
+imagePullSecrets:
+  - name: image-pull-secret-name
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+
+envVariables:
+  - name: ENV_VAR_NAME
+    value: value
+
+secretEnvVariables:
+  - name: SECRET_ENV_VAR_NAME
+    secretName: secret-name
+    secretKey: secret-key
