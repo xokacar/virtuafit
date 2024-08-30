@@ -33,7 +33,7 @@ jobs:
         run: |
           cd auth_service
           docker build -t auth_service:latest .
-          docker tag auth_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service
+          docker tag auth_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:auth_service
 
       - name: Build and push analytics_service image
@@ -41,11 +41,11 @@ jobs:
           cd analytics_service
           docker build -t analytics_service:latest .
           docker tag analytics_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:analytics_service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Build and push workout_service image
         run: |
           cd workout_service
           docker build -t workout_service:latest .
           docker tag workout_service:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:workout_service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
