@@ -1,0 +1,25 @@
+replicaCount: 1
+
+app:
+  name: auth-service
+  namespace: vf-dev
+  environment: dev
+
+image:
+  repository: 776346125570.dkr.ecr.eu-west-2.amazonaws.com/vf/auth-service
+  tag: "latest"
+  pullPolicy: "Always"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 5000
+
+probes:
+  path: "/health"
+  initialDelaySeconds: 10
+
+imagePullSecrets:
+  - name: ecr-secret
+
+

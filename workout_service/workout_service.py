@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import jwt
 from functools import wraps
-import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -46,6 +45,10 @@ def add_workout(current_user):
 def get_workouts(current_user):
     user_workouts = workouts.get(current_user, [])
     return jsonify({'workouts': user_workouts}), 200
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
