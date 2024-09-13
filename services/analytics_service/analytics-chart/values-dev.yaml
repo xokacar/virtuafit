@@ -1,0 +1,29 @@
+replicaCount: 1
+
+app:
+  name: analytics-service
+  namespace: vf-dev
+  environment: dev
+
+image:
+  repository: analytics_service  
+  tag: "latest"
+  pullPolicy: IfNotPresent   
+
+env:
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: analytics-service-psql-secret  
+        key: DATABASE_URL        
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 5000
+
+probes:
+  path: "/health"
+  initialDelaySeconds: 10
+
+imagePullSecrets: []
