@@ -1,0 +1,60 @@
+# Ignore Python virtual environments
+venv/
+*.pyc
+__pycache__/
+
+# Ignore Docker-related files and directories
+dockerconfig.json
+docker-compose.override.yml
+# Ignore Docker build cache
+*.pid
+*.log
+
+# Ignore Flask and other Python environment-specific files
+*.env
+instance/
+.env
+.DS_Store
+
+# Ignore test coverage reports
+htmlcov/
+.coverage
+.cache/
+pytest_cache/
+*.cover
+
+# Ignore Nginx temporary files
+nginx/conf.d/*~
+nginx/*.pid
+nginx/logs/
+
+# Ignore Kubernetes generated files
+*.yaml~
+*.yml~
+
+# Ignore log and temp files
+*.log
+*.tmp
+logs/
+tmp/
+
+# Ignore any backup files
+*~
+
+# Ignore any compiled bytecode or cache files
+__pycache__/
+*.py[cod]
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Ignore requirements installed in virtual environments
+pip-log.txt
+
+# Ignore Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+.terragrunt-*
+
+.terragrunt
