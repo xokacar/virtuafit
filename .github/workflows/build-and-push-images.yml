@@ -1,0 +1,67 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+  AUTH_ARTIFACT_REPO: ${{ secrets.AUTH_ARTIFACT_REPO }}
+  WORKOUT_ARTIFACT_REPO: ${{ secrets.WORKOUT_ARTIFACT_REPO }}
+  ANALYTICS_ARTIFACT_REPO: ${{ secrets.ANALYTICS_ARTIFACT_REPO }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images to Artifact Registry
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+
+      - name: Configure Docker to use Artifact Registry
+        run: |
+          echo "Configuring Docker to use Artifact Registry repositories..."
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+
+      - name: Build and Push Auth Service Docker Image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_URI=${{ env.AUTH_ARTIFACT_REPO }}/auth-service:${IMAGE_TAG}
+          echo "Building Auth Service Docker image: $IMAGE_URI"
+          docker build -t $IMAGE_URI ./services/auth_service
+          echo "Pushing Auth Service Docker image to Artifact Registry..."
+          docker push $IMAGE_URI
+
+
+      - name: Build and Push Workout Service Docker Image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_URI=${{ env.WORKOUT_ARTIFACT_REPO }}/workout-service:${IMAGE_TAG}
+          echo "Building Workout Service Docker image: $IMAGE_URI"
+          docker build -t $IMAGE_URI ./services/workout_service
+          echo "Pushing Workout Service Docker image to Artifact Registry..."
+          docker push $IMAGE_URI
+
+
+      - name: Build and Push Analytics Service Docker Image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_URI=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service:${IMAGE_TAG}
+          echo "Building Analytics Service Docker image: $IMAGE_URI"
+          docker build -t $IMAGE_URI ./services/analytics_service
+          echo "Pushing Analytics Service Docker image to Artifact Registry..."
+          docker push $IMAGE_URI
