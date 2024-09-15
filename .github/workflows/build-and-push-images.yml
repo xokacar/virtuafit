@@ -34,12 +34,10 @@ jobs:
           project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
           export_default_credentials: true
 
-
       - name: Configure Docker to use Artifact Registry
         run: |
           echo "Configuring Docker to use Artifact Registry repositories..."
           gcloud auth configure-docker europe-west1-docker.pkg.dev
-
 
       - name: Build and Push Auth Service Docker Image
         run: |
@@ -49,10 +47,13 @@ jobs:
 
           echo "Building Auth Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/auth_service
+
           echo "Pushing Auth Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
-          docker push $LATEST_IMAGE_URI
 
+          echo "Tagging the image as 'latest' and pushing..."
+          docker tag $IMAGE_URI $LATEST_IMAGE_URI
+          docker push $LATEST_IMAGE_URI
 
       - name: Build and Push Workout Service Docker Image
         run: |
@@ -62,19 +63,26 @@ jobs:
 
           echo "Building Workout Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/workout_service
+
           echo "Pushing Workout Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
-          docker push $LATEST_IMAGE_URI
 
+          echo "Tagging the image as 'latest' and pushing..."
+          docker tag $IMAGE_URI $LATEST_IMAGE_URI
+          docker push $LATEST_IMAGE_URI
 
       - name: Build and Push Analytics Service Docker Image
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_URI=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service:${IMAGE_TAG}
-          LATEST_IMAGE_URI=${{ env.WORKOUT_ARTIFACT_REPO }}/analytics-service:latest
+          LATEST_IMAGE_URI=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service:latest
 
           echo "Building Analytics Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/analytics_service
+
           echo "Pushing Analytics Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
+
+          echo "Tagging the image as 'latest' and pushing..."
+          docker tag $IMAGE_URI $LATEST_IMAGE_URI
           docker push $LATEST_IMAGE_URI

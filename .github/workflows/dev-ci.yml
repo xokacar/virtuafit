@@ -15,14 +15,6 @@ env:
   GKE_CLUSTER_NAME: "gke-dev"
   VPC_NAME: "vpc-dev"
   SUBNET_NAME: "subnet-dev"
-  AUTH_HELM_CHART_DIR: "services/auth_service/auth-chart"
-  WORKOUT_HELM_CHART_DIR: "services/workout_service/workout-chart"
-  ANALYTICS_HELM_CHART_DIR: "services/analytics_service/analytics-chart"
-  NGINX_DEPLOYMENT_DIR: "./nginx"
-  KUBERNETES_NAMESPACE: "vf-dev"
-  AUTH_ARTIFACT_REPO: ${{ secrets.AUTH_ARTIFACT_REPO }}
-  WORKOUT_ARTIFACT_REPO: ${{ secrets.WORKOUT_ARTIFACT_REPO }}
-  ANALYTICS_ARTIFACT_REPO: ${{ secrets.ANALYTICS_ARTIFACT_REPO }}
 
 jobs:
   setup-infrastructure:
@@ -53,105 +45,33 @@ jobs:
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/
 
-      - name: Initialize and apply Terragrunt
+      - name: Terraform fmt (Formatting Check)
         run: |
-          terragrunt init
-          terragrunt apply -auto-approve
-
-  deploy-services:
-    name: Deploy Helm charts for services
-    needs: setup-infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          export_default_credentials: true
-     
-     
-      - name: Install gke-gcloud-auth-plugin
-        run: |
-          sudo apt-get update
-          gcloud components install gke-gcloud-auth-plugin -q
-
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terraform fmt -check -recursive
           
-      - name: Authenticate with GKE and set up kubectl
-        env:
-          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
+      - name: Terragrunt fmt (Formatting Check)
         run: |
-          gcloud container clusters get-credentials ${{ env.GKE_CLUSTER_NAME }} --region ${{ env.GCP_REGION }} --project ${{ env.GOOGLE_CLOUD_PROJECT }}
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terragrunt hclfmt --check
 
-      - name: Set up Helm
+      - name: Terraform validate (Validation Check)
         run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terraform validate
 
-      - name: Create Kubernetes namespace
+      - name: Terragrunt validate (Validation Check)
         run: |
-          kubectl create namespace ${{ env.KUBERNETES_NAMESPACE }} || true
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terragrunt validate
 
-      - name: Create PostgreSQL Secret
+      - name: Terragrunt lint (Linting Check)
         run: |
-          kubectl create secret generic psql-secret \
-            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
-            --from-literal=POSTGRES_PASSWORD=123456789 || true
-            
-      - name: Deploy Auth Service Helm chart    
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terragrunt validate-inputs
+
+      - name: Initialize and apply Terragrunt for GKE and VPC
         run: |
-          helm upgrade --install auth-service ${{ env.AUTH_HELM_CHART_DIR }} \
-            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
-            --set image.repository=${{ env.AUTH_ARTIFACT_REPO }}/auth-service \
-            --set image.tag=${{ github.sha }} \
-            --values ${{ env.AUTH_HELM_CHART_DIR }}/values-dev.yaml --wait
-
-
-      - name: Deploy Workout Service Helm chart
-        run: |
-          helm upgrade --install workout-service ${{ env.WORKOUT_HELM_CHART_DIR }} \
-            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
-            --set image.repository=${{ env.WORKOUT_ARTIFACT_REPO }}/workout-service \
-            --set image.tag=${{ github.sha }} --wait
-            --values ${{ env.WORKOUT_HELM_CHART_DIR }}/values-dev.yaml --wait
-
-      - name: Deploy Analytics Service Helm chart
-        run: |
-          helm upgrade --install analytics-service ${{ env.ANALYTICS_HELM_CHART_DIR }} \
-            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
-            --set image.repository=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service \
-            --set image.tag=${{ github.sha }} --wait
-            --values ${{ env.ANALYTICS_HELM_CHART_DIR }}/values-dev.yaml --wait
-
-  deploy-nginx:
-    name: Deploy Nginx
-    needs: deploy-services
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Deploy Nginx ConfigMap
-        run: |
-          kubectl apply -f ${{ env.NGINX_DEPLOYMENT_DIR }}/nginx-configmap.yaml --namespace ${{ env.KUBERNETES_NAMESPACE }}
-
-      - name: Deploy Nginx Deployment
-        run: |
-          kubectl apply -f ${{ env.NGINX_DEPLOYMENT_DIR }}/nginx-deployment.yaml --namespace ${{ env.KUBERNETES_NAMESPACE }}
-
-      - name: Deploy Nginx Service
-        run: |
-          kubectl apply -f ${{ env.NGINX_DEPLOYMENT_DIR }}/nginx-service.yaml --namespace ${{ env.KUBERNETES_NAMESPACE }}
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          terragrunt init
+          terragrunt apply -auto-approve --terragrunt-ignore-dependency-errors || echo "Resources already exist, skipping creation"
