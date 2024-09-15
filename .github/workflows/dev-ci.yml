@@ -98,7 +98,12 @@ jobs:
         run: |
           kubectl create namespace ${{ env.KUBERNETES_NAMESPACE }} || true
 
-      - name: Deploy Auth Service Helm chart
+      - name: Create PostgreSQL Secret
+        run: |
+          kubectl create secret generic psql-secret \
+            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
+            --from-literal=POSTGRES_PASSWORD=123456789 || true
+
         run: |
           helm upgrade --install auth-service ${{ env.AUTH_HELM_CHART_DIR }} \
             --namespace ${{ env.KUBERNETES_NAMESPACE }} \
