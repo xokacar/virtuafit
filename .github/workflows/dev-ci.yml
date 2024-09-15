@@ -44,21 +44,11 @@ jobs:
           curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.67.1/terragrunt_linux_amd64 -o terragrunt
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/
-
-      - name: Terraform fmt (Formatting Check)
-        run: |
-          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
-          terraform fmt -check -recursive
           
       - name: Terragrunt fmt (Formatting Check)
         run: |
           cd ${{ env.TERRAGRUNT_WORKING_DIR }}
           terragrunt hclfmt --check
-
-      - name: Terraform validate (Validation Check)
-        run: |
-          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
-          terraform validate
 
       - name: Terragrunt validate (Validation Check)
         run: |
