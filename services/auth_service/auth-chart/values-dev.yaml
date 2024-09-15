@@ -6,9 +6,9 @@ app:
   environment: dev
 
 image:
-  repository: auth_service  
+  repository: europe-west1-docker.pkg.dev/virtuafit/auth-repo/auth-service  
   tag: "latest"
-  pullPolicy: IfNotPresent   
+  pullPolicy: Always   
 
 env:
   - name: DATABASE_URL
