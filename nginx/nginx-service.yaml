@@ -4,7 +4,7 @@ metadata:
   name: nginx
   namespace: vf-dev
 spec:
-  type: NodePort 
+  type: LoadBalancer 
   ports:
     - port: 80
       targetPort: 80
