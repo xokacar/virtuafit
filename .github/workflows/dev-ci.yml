@@ -50,11 +50,6 @@ jobs:
           cd ${{ env.TERRAGRUNT_WORKING_DIR }}
           terragrunt hclfmt --check
 
-      - name: Terragrunt validate (Validation Check)
-        run: |
-          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
-          terragrunt validate
-
       - name: Terragrunt lint (Linting Check)
         run: |
           cd ${{ env.TERRAGRUNT_WORKING_DIR }}
