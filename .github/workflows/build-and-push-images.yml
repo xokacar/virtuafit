@@ -45,27 +45,36 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_URI=${{ env.AUTH_ARTIFACT_REPO }}/auth-service:${IMAGE_TAG}
+          LATEST_IMAGE_URI=${{ env.AUTH_ARTIFACT_REPO }}/auth-service:latest
+
           echo "Building Auth Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/auth_service
           echo "Pushing Auth Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
+          docker push $LATEST_IMAGE_URI
 
 
       - name: Build and Push Workout Service Docker Image
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_URI=${{ env.WORKOUT_ARTIFACT_REPO }}/workout-service:${IMAGE_TAG}
+          LATEST_IMAGE_URI=${{ env.WORKOUT_ARTIFACT_REPO }}/workout-service:latest
+
           echo "Building Workout Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/workout_service
           echo "Pushing Workout Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
+          docker push $LATEST_IMAGE_URI
 
 
       - name: Build and Push Analytics Service Docker Image
         run: |
           IMAGE_TAG=${{ github.sha }}
           IMAGE_URI=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service:${IMAGE_TAG}
+          LATEST_IMAGE_URI=${{ env.WORKOUT_ARTIFACT_REPO }}/analytics-service:latest
+
           echo "Building Analytics Service Docker image: $IMAGE_URI"
           docker build -t $IMAGE_URI ./services/analytics_service
           echo "Pushing Analytics Service Docker image to Artifact Registry..."
           docker push $IMAGE_URI
+          docker push $LATEST_IMAGE_URI
