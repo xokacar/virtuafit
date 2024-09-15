@@ -15,7 +15,13 @@ env:
     valueFrom:
       secretKeyRef:
         name: auth-service-psql-secret
-        key: DATABASE_URL        
+        key: DATABASE_URL  
+  - name: SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: jwt-secret-key
+        key: SECRET_KEY
+      
 
 service:
   type: ClusterIP

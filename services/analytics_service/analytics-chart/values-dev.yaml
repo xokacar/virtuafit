@@ -6,9 +6,9 @@ app:
   environment: dev
 
 image:
-  repository: analytics_service  
+  repository: europe-west1-docker.pkg.dev/virtuafit/analytics-repo/analytics-service 
   tag: "latest"
-  pullPolicy: IfNotPresent   
+  pullPolicy: Always
 
 env:
   - name: DATABASE_URL
@@ -16,6 +16,12 @@ env:
       secretKeyRef:
         name: analytics-service-psql-secret  
         key: DATABASE_URL        
+  - name: SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: jwt-secret-key
+        key: SECRET_KEY
+      
 
 service:
   type: ClusterIP
