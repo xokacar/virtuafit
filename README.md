@@ -2,6 +2,44 @@
 
 VirtuaFit is a microservices-based fitness application built to provide a comprehensive system for user authentication, workout tracking, and data analytics. It uses Flask for the services, PostgreSQL as the database, SQLAlchemy for ORM, JWT for authentication, and Kubernetes for deployment and orchestration.
 
+## Infrastructure Architecture Diagram
+```
+        ┌──────────────────────────┐
+        │        Client            │
+        └──────────────────────────┘
+                ↓
+┌───────────────────────────────────────────────────────┐
+│                                                       │
+│           Google Cloud Load Balancer                  │
+│                                                       │
+└───────────────────────────────────────────────────────┘
+                ↓
+
+┌──────────────────────────────────────────────────────────┐
+│                                                          │
+│           Virtual Private Cloud (VPC)                    │
+│                                                          │
+│ ┌────────────────────────────────────────────────────┐   │
+│ │                                                    │   │
+│ │        Google Kubernetes Engine (GKE)              │   │
+│ │                                                    │   │
+│ │ ┌────────────────────────────────────────────┐     │   │
+│ │ │     NGINX (Reverse Proxy & Load Balancer)  │     │   │
+│ │ └────────────────────────────────────────────┘     │   │
+│ │                                                    │   │
+│ │ ┌─────────────┐  ┌─────────────┐  ┌──────────────┐ │   │
+│ │ │  Auth Svc   │  │ Workout Svc │  │ Analytics Svc│ │   │
+│ │ └─────────────┘  └─────────────┘  └──────────────┘ │   │
+│ │                                                    │   │
+│ │ ┌────────────────────────────────────────────────┐ │   │
+│ │ │            PostgreSQL Database                 │ │   │
+│ │ └────────────────────────────────────────────────┘ │   │
+│ └────────────────────────────────────────────────────┘   │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+```
+
 ## Installation and Setup
 
 ### Prerequisites
