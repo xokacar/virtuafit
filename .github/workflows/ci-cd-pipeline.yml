@@ -142,7 +142,7 @@ jobs:
 
       - name: Run End-to-End Tests
         run: |
-          pytest --junitxml=results.xml tests/e2/test_e2e.py
+          pytest --junitxml=results.xml tests/e2e/test_e2e.py
 
       - name: Upload Test Results
         if: always()
