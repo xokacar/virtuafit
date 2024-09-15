@@ -30,7 +30,7 @@ data:
             listen 80;
 
             location /auth/ {
-                proxy_pass http://auth_service/; 
+                proxy_pass http://auth_service; 
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -38,7 +38,7 @@ data:
             }
 
             location /analytics/ {
-                proxy_pass http://analytics_service/;  
+                proxy_pass http://analytics_service;  
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -46,7 +46,7 @@ data:
             }
 
             location /workout/ {
-                proxy_pass http://workout_service/;  
+                proxy_pass http://workout_service;  
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
