@@ -10,7 +10,7 @@ on:
 
 env:
   GOOGLE_CLOUD_PROJECT: "virtuafit"
-  TERRAGRUNT_WORKING_DIR: "./terraform"
+  TERRAGRUNT_WORKING_DIR: "terraform/envs/dev"
   GCP_REGION: "europe-west1"
   GKE_CLUSTER_NAME: "gke-dev"
   VPC_NAME: "vpc-dev"
