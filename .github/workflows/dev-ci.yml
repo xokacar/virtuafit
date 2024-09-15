@@ -10,7 +10,7 @@ on:
 
 env:
   GOOGLE_CLOUD_PROJECT: "virtuafit"
-  TERRAGRUNT_WORKING_DIR: "./infrastructure/live/envs/dev"
+  TERRAGRUNT_WORKING_DIR: infrastructure/live/envs/dev
   GCP_REGION: "europe-west1"
   GKE_CLUSTER_NAME: "gke-dev"
   VPC_NAME: "vpc-dev"
@@ -54,8 +54,8 @@ jobs:
           sudo mv terragrunt /usr/local/bin/
 
       - name: Initialize and apply Terragrunt
-        working-directory: ${{ env.TERRAGRUNT_WORKING_DIR }}
         run: |
+          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
           terragrunt init
           terragrunt apply -auto-approve
 
