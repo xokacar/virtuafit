@@ -103,7 +103,9 @@ jobs:
           helm upgrade --install auth-service ${{ env.AUTH_HELM_CHART_DIR }} \
             --namespace ${{ env.KUBERNETES_NAMESPACE }} \
             --set image.repository=${{ env.AUTH_ARTIFACT_REPO }}/auth-service \
-            --set image.tag=${{ github.sha }} --wait
+            --set image.tag=${{ github.sha }} \
+            --values ${{ env.AUTH_HELM_CHART_DIR }}/values-dev.yaml --wait
+
 
       - name: Deploy Workout Service Helm chart
         run: |
@@ -111,6 +113,7 @@ jobs:
             --namespace ${{ env.KUBERNETES_NAMESPACE }} \
             --set image.repository=${{ env.WORKOUT_ARTIFACT_REPO }}/workout-service \
             --set image.tag=${{ github.sha }} --wait
+            --values ${{ env.WORKOUT_HELM_CHART_DIR }}/values-dev.yaml --wait
 
       - name: Deploy Analytics Service Helm chart
         run: |
@@ -118,6 +121,7 @@ jobs:
             --namespace ${{ env.KUBERNETES_NAMESPACE }} \
             --set image.repository=${{ env.ANALYTICS_ARTIFACT_REPO }}/analytics-service \
             --set image.tag=${{ github.sha }} --wait
+            --values ${{ env.ANALYTICS_HELM_CHART_DIR }}/values-dev.yaml --wait
 
   deploy-nginx:
     name: Deploy Nginx
