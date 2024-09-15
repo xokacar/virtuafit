@@ -55,7 +55,7 @@ jobs:
 
       - name: Initialize and apply Terragrunt
         run: |
-          cd ${{ env.TERRAGRUNT_WORKING_DIR }}
+          cd infrastructure/live/envs/dev
           terragrunt init
           terragrunt apply -auto-approve
 
