@@ -55,7 +55,6 @@ jobs:
 
       - name: Initialize and apply Terragrunt
         run: |
-          cd infrastructure/live/envs/dev
           terragrunt init
           terragrunt apply -auto-approve
 
