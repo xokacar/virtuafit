@@ -30,11 +30,11 @@ spec:
               key: POSTGRES_PASSWORD
         - name: POSTGRES_DB
           value: auth_db
-        - name: POSTGRES_MULTIPLE_DATABASES
-          value: auth_db,workout_db,analytics_db
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata/db
         volumeMounts:
         - name: pgdata
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/postgresql/data/pgdata
   volumeClaimTemplates:
   - metadata:
       name: pgdata
