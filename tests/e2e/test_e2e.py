@@ -6,15 +6,40 @@ BASE_URL = "http://34.77.94.55"  # Replace with your NGINX External IP
 @pytest.fixture(scope="session")
 def get_token():
     """Authenticate and return the token for other tests."""
-    url = f"{BASE_URL}/auth/login"
-    response = requests.post(url, json={
-        "username": "testuser",
-        "password": "testpassword"
+    # Define user credentials
+    username = "testuser001"
+    password = "testpassword001"
+    
+    # Step 1: Register the user
+    register_url = f"{BASE_URL}/auth/register"
+    registration_response = requests.post(register_url, json={
+        "username": username,
+        "password": password
     })
     
-    assert response.status_code == 200, "Failed to log in"
-    return response.json().get("token")
-
+    if registration_response.status_code == 201:
+        print("User registered successfully.")
+    elif registration_response.status_code == 400:
+        # Assuming 400 means user already exists
+        print("User already exists.")
+    else:
+        raise Exception(f"Failed to register user: {registration_response.text}")
+    
+    # Step 2: Log in the user
+    login_url = f"{BASE_URL}/auth/login"
+    login_response = requests.post(login_url, json={
+        "username": username,
+        "password": password
+    })
+    
+    if login_response.status_code != 200:
+        raise AssertionError(f"Failed to log in: {login_response.text}")
+    
+    token = login_response.json().get("token")
+    if not token:
+        raise AssertionError("Token not found in login response.")
+    
+    return token
 
 def test_auth_service_health():
     """Check health of the auth service."""
