@@ -8,6 +8,7 @@ resource "google_container_cluster" "gke_cluster" {
     node_config {
       machine_type = var.machine_type
       disk_size_gb = 50
+      disk_type    = "pd-standard"
     }
 
   }
