@@ -5,9 +5,11 @@ from sqlalchemy.orm import Session
 from models import Workout
 from database import SessionLocal
 from config import Config
+from elasticsearch_client import es 
+import logging
+import datetime
 
 analytics_blueprint = Blueprint('analytics', __name__)
-
 
 def token_required(f):
     @wraps(f)
@@ -38,10 +40,23 @@ def get_analytics(current_user):
 
     session.close()
 
-    return jsonify({
+    analytics_data = {
         'total_duration': total_duration,
         'workout_types': workout_types
-    }), 200
+    }
+
+    try:
+        es.index(index='user-analytics-queries', document={
+            'username': current_user,
+            'total_duration': total_duration,
+            'workout_types': workout_types,
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        })
+        logging.debug("Successfully indexed analytics data to Elasticsearch.")
+    except Exception as e:
+        logging.error(f"Error indexing analytics data: {e}")
+
+    return jsonify(analytics_data), 200
 
 
 @analytics_blueprint.route('/health', methods=['GET'])

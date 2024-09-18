@@ -5,6 +5,12 @@ resource "google_container_cluster" "gke_cluster" {
   node_pool {
     name       = "default-pool"
     node_count = var.node_count
+    
+    autoscaling {
+      min_node_count = 2
+      max_node_count = 8
+    }
+    
     node_config {
       machine_type = var.machine_type
       disk_size_gb = 50
@@ -17,3 +23,4 @@ resource "google_container_cluster" "gke_cluster" {
 
   deletion_protection = false
 }
+

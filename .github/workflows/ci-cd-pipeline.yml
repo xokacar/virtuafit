@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/es-kibana-implemented-autoscale-added-to-tf
   pull_request:
     branches:
       - main
@@ -48,10 +49,24 @@ jobs:
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/
 
-      - name: Initialize and apply Terragrunt
+      - name: Clean Terragrunt cache 
         run: |
+          rm -rf .terragrunt-cache
+
+      - name: Validate Terragrunt Configuration
+        run: |
+          terragrunt validate
+
+      - name: Plan Infrastructure Changes
+        run: |
+          export TF_LOG=DEBUG
+          terragrunt plan
+
+      - name: Initialize and apply Terragrunt with Debug Logs
+        run: |
+          export TF_LOG=DEBUG
           terragrunt init
-          terragrunt apply -auto-approve
+          terragrunt apply -lock=false -auto-approve
 
   build-and-push:
     name: Build and Push Docker Images to Artifact Registry

@@ -5,9 +5,10 @@ from sqlalchemy.orm import Session
 from models import Workout
 from database import SessionLocal
 from config import Config
+from elasticsearch_client import es 
+import logging
 
 workout_blueprint = Blueprint('workout', __name__)
-
 
 def token_required(f):
     @wraps(f)
@@ -44,6 +45,17 @@ def add_workout(current_user):
     session.commit()
     session.close()
 
+    try:
+        es.index(index='workout-entries', document={
+            'username': current_user,
+            'workout_type': data['workout_type'],
+            'duration': data['duration'],
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        })
+        logging.debug("Successfully indexed workout data to Elasticsearch.")
+    except Exception as e:
+        logging.error(f"Error indexing workout data: {e}")
+
     return jsonify({'message': 'Workout added'}), 201
 
 
@@ -59,6 +71,17 @@ def get_workouts(current_user):
     ]
 
     session.close()
+
+    try:
+        es.index(index='workout-retrievals', document={
+            'username': current_user,
+            'retrieval_timestamp': datetime.datetime.utcnow().isoformat(),
+            'number_of_workouts': len(workouts)
+        })
+        logging.debug("Successfully indexed workout retrieval data to Elasticsearch.")
+    except Exception as e:
+        logging.error(f"Error indexing workout retrieval data: {e}")
+
     return jsonify({'workouts': workouts}), 200
 
 

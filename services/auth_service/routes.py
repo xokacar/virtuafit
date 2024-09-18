@@ -6,9 +6,10 @@ from database import SessionLocal
 import jwt
 import datetime
 from config import Config
+from elasticsearch_client import es  
+import logging
 
 auth_blueprint = Blueprint('auth', __name__)
-
 
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
@@ -31,7 +32,16 @@ def register():
     session.add(new_user)
     session.commit()
     session.close()
-    
+
+    try:
+        es.index(index='user-registrations', document={
+            'username': username,
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        })
+        logging.debug("Successfully indexed registration data to Elasticsearch.")
+    except Exception as e:
+        logging.error(f"Error indexing registration data: {e}")
+
     return jsonify({'message': 'User registered successfully'}), 201
 
 
@@ -49,15 +59,24 @@ def login():
     if not user or not check_password_hash(user.password_hash, data['password']):
         session.close()
         return jsonify({'message': 'Invalid credentials'}), 401
-    
+
     token = jwt.encode({
         'username': user.username,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }, Config.SECRET_KEY)
     
     session.close()
-    return jsonify({'token': token})
+    
+    try:
+        es.index(index='user-logins', document={
+            'username': data['username'],
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        })
+        logging.debug("Successfully indexed login data to Elasticsearch.")
+    except Exception as e:
+        logging.error(f"Error indexing login data: {e}")
 
+    return jsonify({'token': token})
 
 @auth_blueprint.route('/health', methods=['GET'])
 def health():
