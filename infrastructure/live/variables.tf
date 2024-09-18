@@ -22,7 +22,7 @@ variable "node_count" {
 variable "machine_type" {
   description = "Machine type for the node pool in GKE cluster"
   type        = string
-  default     = "n2-standard-4"
+  default     = "n1-standard-1"
 }
 
 variable "credentials_file" {
