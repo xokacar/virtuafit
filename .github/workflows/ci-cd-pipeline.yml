@@ -59,6 +59,7 @@ jobs:
 
       - name: Plan Infrastructure Changes
         run: |
+          export TF_LOG=DEBUG
           terragrunt plan
 
       - name: Initialize and apply Terragrunt with Debug Logs
