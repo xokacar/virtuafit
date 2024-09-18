@@ -49,8 +49,21 @@ jobs:
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/
 
-      - name: Initialize and apply Terragrunt
+      - name: Clean Terragrunt cache 
         run: |
+          rm -rf .terragrunt-cache
+
+      - name: Validate Terragrunt Configuration
+        run: |
+          terragrunt validate
+
+      - name: Plan Infrastructure Changes
+        run: |
+          terragrunt plan
+
+      - name: Initialize and apply Terragrunt with Debug Logs
+        run: |
+          export TF_LOG=DEBUG
           terragrunt init
           terragrunt apply -lock=false -auto-approve
 
