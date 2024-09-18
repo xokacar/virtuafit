@@ -14,14 +14,25 @@ env:
   - name: DATABASE_URL
     valueFrom:
       secretKeyRef:
-        name: analytics-service-psql-secret  
-        key: DATABASE_URL        
+        name: auth-service-psql-secret
+        key: DATABASE_URL
   - name: SECRET_KEY
     valueFrom:
       secretKeyRef:
         name: jwt-secret-key
         key: SECRET_KEY
-      
+  - name: ELASTICSEARCH_HOST
+    value: "quickstart-es-http.vf-dev.svc.cluster.local"
+  - name: ELASTICSEARCH_PORT
+    value: "9200"
+  - name: ELASTICSEARCH_USER
+    value: "elastic"
+  - name: ELASTICSEARCH_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: quickstart-es-elastic-user
+        key: elastic
+
 
 service:
   type: ClusterIP

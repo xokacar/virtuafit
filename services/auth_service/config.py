@@ -3,3 +3,7 @@ import os
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-default-secret-key')  
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    ELASTICSEARCH_HOST = os.getenv('ELASTICSEARCH_HOST')
+    ELASTICSEARCH_PORT = os.getenv('ELASTICSEARCH_PORT')
+    ELASTICSEARCH_USER = os.getenv('ELASTICSEARCH_USER')
+    ELASTICSEARCH_PASSWORD = os.getenv('ELASTICSEARCH_PASSWORD')

@@ -12,8 +12,7 @@ inputs = {
   subnet_cidr = "10.0.0.0/16"
 
   # GKE Cluster
-  node_count   = 1
-  machine_type = "n1-standard-1"
+  machine_type = "n2-standard-4"
 
 }
 

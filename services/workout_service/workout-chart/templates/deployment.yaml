@@ -14,19 +14,25 @@ spec:
         app: {{ .Values.app.name }}
     spec:
       containers:
-      - name: {{ .Values.app.name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.service.targetPort }}
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: psql-secret
-              key: DATABASE_URL
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.probes.path }}
-            port: {{ .Values.service.targetPort }}
-          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+        - name: {{ .Values.app.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            {{- range .Values.env }}
+            - name: "{{ .name }}"
+              {{- if .value }}
+              value: "{{ .value }}"
+              {{- else if .valueFrom }}
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .valueFrom.secretKeyRef.name }}"
+                  key: "{{ .valueFrom.secretKeyRef.key }}"
+              {{- end }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
