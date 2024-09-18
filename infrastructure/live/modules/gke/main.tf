@@ -14,7 +14,6 @@ resource "google_container_cluster" "gke_cluster" {
       machine_type = var.machine_type
       disk_size_gb = 50
     }
-
   }
 
   network    = var.network
@@ -23,6 +22,14 @@ resource "google_container_cluster" "gke_cluster" {
   deletion_protection = false
   
   lifecycle {
-      create_before_destroy = true
-    }
+    create_before_destroy = true
+
+    # Ignore changes to certain fields to prevent updates
+    ignore_changes = [
+      node_pool,
+      remove_default_node_pool,
+      node_pool[0].node_count,
+      node_pool[0].node_config.machine_type
+    ]
+  }
 }
