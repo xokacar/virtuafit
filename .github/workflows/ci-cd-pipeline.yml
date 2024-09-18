@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/es-kibana-implemented-autoscale-added-to-tf
   pull_request:
     branches:
       - main
